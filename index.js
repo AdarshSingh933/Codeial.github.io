@@ -1,8 +1,11 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const db = require('./config/mongoose');
+const cookieParser = require('cookie-parser');
 const app=express();
 
+app.use(express.urlencoded());
+app.use(cookieParser());
 app.use(expressLayouts);
 app.use(express.static('./assets'));
 
