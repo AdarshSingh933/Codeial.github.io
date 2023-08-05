@@ -1,9 +1,20 @@
 const User = require('../models/user');
 
-module.exports.profile= function(req,res){
-    return res.render('user_profile',{
-        title:'Profile'
-    });
+module.exports.profile=async function(req,res){
+ try{
+    if(req.cookies.user_id){
+        const user =await User.findById(req.cookies.user_id);
+        if(user){
+            return res.render('user_profile',{
+                title:"User Profile",
+                user:user
+            });
+        }
+    }
+    }catch(err){
+        console.log("error",err);
+    }
+     return res.redirect('/user/sign-in');
 }
 // module.exports.signUp =async function(req,res){
 //     try{
@@ -32,9 +43,19 @@ module.exports.signUp = function(req,res){
         title: "Codeial | Sign Up"
     });
 }
-module.exports.signIn = function(req,res){
-    return res.render('user_sign_in',{
-        title: "Codeial | Sign In"
+module.exports.signIn =async function(req,res){
+try{
+    if(req.cookies.user_id){
+        const user =await User.findById(req.cookies.user_id);
+        if(user){
+            return res.redirect('/user/profile');
+        }
+     }
+   }catch(err){
+    console.log("error",err);
+   }
+   return res.render('user_sign_in',{
+    title: "Codeial | Sign In"
     });
 }
 module.exports.create = async function(req,res){
@@ -53,5 +74,18 @@ module.exports.create = async function(req,res){
         console.log("error",err);
         return ;
     }
-    
+}
+
+module.exports.createSession = async function(req,res){
+    const user =await User.findOne({email:req.body.email});
+    if(user){
+        if(user.password !== req.body.password){
+            return res.redirect('back');
+        }else{
+            res.cookie('user_id',user.id);
+            return res.redirect('/user/profile');
+        }
+    }else{
+        return res.redirect('back');
+    }
 }
