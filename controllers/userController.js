@@ -1,40 +1,25 @@
 const User = require('../models/user');
 
-module.exports.profile= function(req,res){
+module.exports.profile=async function(req,res){
     return res.render('user_profile',{
-        title:'Profile'
+        title:"User Profile", 
     });
 }
-// module.exports.signUp =async function(req,res){
-//     try{
-//           await User.create({
-//             email:req.body.email,
-//             password:req.body.password,
-//             name:req.body.name
-//           });
-//     }catch(err){
-//         console.log("error",err);
-//     }
-//     return res.redirect('/signIn');
-// }
-// module.exports.singIn =async function(req,res){
-//     const email = req.body.email;
-//     const password = req.body.password;
-//     const user = User.find({email,password});
-//     if(user){
-//         return res.redirect('/profile');
-//     }else{
-//         return ;
-//     } 
-// }
+
 module.exports.signUp = function(req,res){
+    if(req.isAuthenticated()){
+        return res.redirect('/user/profile');
+    }
     return res.render('user_sign_up',{
         title: "Codeial | Sign Up"
     });
 }
-module.exports.signIn = function(req,res){
-    return res.render('user_sign_in',{
-        title: "Codeial | Sign In"
+module.exports.signIn =async function(req,res){
+    if(req.isAuthenticated()){
+        return res.redirect('/user/profile');
+    }
+   return res.render('user_sign_in',{
+    title: "Codeial | Sign In"
     });
 }
 module.exports.create = async function(req,res){
@@ -53,5 +38,16 @@ module.exports.create = async function(req,res){
         console.log("error",err);
         return ;
     }
-    
+}
+
+module.exports.createSession = function(req,res){
+    return res.redirect('/');
+}
+
+module.exports.destroySession = function(req,res){
+    req.logout(function(){
+        console.log('user logged out');
+    });
+
+    return res.redirect('/');
 }

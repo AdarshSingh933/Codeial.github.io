@@ -1,6 +1,24 @@
-
+        <link rel="stylesheet" href="/css/home.css">
         <h1>
             Codeial/<%= title %>
         </h1>
+        <% if(locals.user) { %>
+        <section id="feed-post">
+            <h4>Post</h4>
+            <form action="/post/create" id="new-post-form" method="post">
+                  <textarea name="content" cols="30" rows="3"></textarea>
+                  <input type="submit" value="post">
+            </form>
+        </section>
+        <% } %>
         
-  
+        <% if(posts.length > 0) {%>
+        <section id="post-container">
+             <% for(let post of posts) {%>
+                  <%= post.user.name %>
+                  <div class="post-box">
+                    <%= post.content %>
+                  </div>
+                <% } %>
+        </section>
+        <% } %>
