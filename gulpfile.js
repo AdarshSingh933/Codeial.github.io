@@ -6,8 +6,7 @@ const rev = require('gulp-rev');
 const uglify = require('gulp-uglify-es').default;
 const imagemin = require('gulp-imagemin');
 const del = require('del');
-const rimraf = require('rimraf');
-const fs = require('fs');
+
 
 gulp.task('css',function(done){
     console.log('minifying css..');
@@ -56,12 +55,12 @@ gulp.task('images', function(done){
 });
 
 // empty the public/assets directory
-// gulp.task('clean:assets', function(done){
-//     del.sync('./public/assets');
-//     done();
-// });
+gulp.task('clean:assets', function(done){
+    del.sync('./public/assets');
+    done();
+});
 
-gulp.task('build', gulp.series('css', 'js', 'images'), function(done){
+gulp.task('build', gulp.series('clean:assets', 'css', 'js', 'images'), function(done){
     console.log('Building assets');
     done();
 });
