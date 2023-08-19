@@ -1,24 +1,55 @@
-        <link rel="stylesheet" href="/css/home.css">
-        <h1>
-            Codeial/<%= title %>
-        </h1>
-        <% if(locals.user) { %>
-        <section id="feed-post">
-            <h4>Post</h4>
-            <form action="/post/create" id="new-post-form" method="post">
-                  <textarea name="content" cols="30" rows="3"></textarea>
-                  <input type="submit" value="post">
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/chat_box.css">
+
+<div id="home-container">
+    <section id="feed-posts">
+            <h4>Posts</h4>
+            <% if(locals.user){ %>
+            <form action="/post/create" id="new-post-form" method="POST">
+                <textarea name="content" cols="30" rows="3" placeholder="Type Here..." required></textarea>
+                <input type="submit" value="Post">
             </form>
-        </section>
-        <% } %>
+            <% } %>
         
-        <% if(posts.length > 0) {%>
-        <section id="post-container">
-             <% for(let post of posts) {%>
-                  <%= post.user.name %>
-                  <div class="post-box">
-                    <%= post.content %>
-                  </div>
-                <% } %>
+            <div id="posts-list-container">
+                <ul>
+                    <% for(post of posts){ %>
+                        
+                    <%- include('_post') -%>
+                        
+                    <%} %>
+                </ul>
+            </div>
         </section>
-        <% } %>
+        
+        
+        <section id="user-friends">
+            <h4>Friends</h4>
+            <% for(u of all_users){%>
+                <p>
+                    <a href="/user/profile/<%= u.id %>"><%= u.name %></a>
+                </p>
+            <% } %>
+        </section>
+        <%- include('_chat_box') -%>
+</div>
+
+<!-- importing this script for creating the comments -->
+<script src="/js/home_post_comment.js" ></script>
+<script src="/js/home_post.js"></script>
+
+<!-- CHANGE :: import the script file for toggle likes, also run it over for the already present posts and comments on the page -->
+<script src="js/toggle_like.js"></script>
+<script>
+    $('.toggle-like-button').each(function(){
+        let self = this;
+        let toggleLike = new ToggleLike(self);
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+<script src="/js/chat_engine.js"></script>
+<% if(locals.user) { %>
+<script>
+    new chatEngine('user-chat-box','<%= locals.user.email %>')
+</script>
+<% } %>

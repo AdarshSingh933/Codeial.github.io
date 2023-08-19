@@ -1,0 +1,18 @@
+footer {
+  background-color: grey;
+  color: white;
+}
+footer #container {
+  display: flex;
+  width: 40%;
+  justify-content: space-around;
+}
+footer #container ul {
+  list-style: none;
+}
+footer #container ul li a {
+  text-decoration: none;
+  color: white;
+}
+
+/*# sourceMappingURL=footer.css.map */

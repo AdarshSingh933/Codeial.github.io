@@ -1,3 +1,19 @@
 body{
     background-color: skyblue;
+    form{
+        #image-preview-container{
+              height: 100px;
+              width: 100px;
+              margin: 10px;
+            #image-close-btn{
+                position: absolute;
+                left: 95px;
+                right: 20px;
+                cursor: pointer;
+            }
+        }
+        .hide{
+            visibility: hidden;
+        }
+    }
 }

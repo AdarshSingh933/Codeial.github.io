@@ -2,16 +2,30 @@ const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const db = require('./config/mongoose');
 const cookieParser = require('cookie-parser');
-const app=express();
-const port=8000;
+const app = express();
+const env = require('./config/environment');
+const logger = require('morgan');
+const port = 8000;
 
 // used for session cookies
 const session = require('express-session');
 const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
+const passPortJWT = require('./config/passport-jwt-strategy');
+const passportGoogle = require('./config/passport-google-oauth2-strategy');
+
 const MongoStore = require('connect-mongo');
 const sassMiddleware = require('sass-middleware');
+const flash = require('connect-flash');
+const customMWare = require('./config/middleware');
 
+//setup the chat server to be used with socket.io
+const chatServer = require('http').Server(app);
+const chatSockets = require('./config/chat_sockets').chatSockets(chatServer);
+
+chatServer.listen(5000);
+console.log('chat server is listening on port 5000');
+const path = require('path');
 
 // app.use(sassMiddleware({
 //     src:'./assets/scss',
@@ -24,7 +38,10 @@ const sassMiddleware = require('sass-middleware');
 app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(expressLayouts);
-app.use(express.static('./assets'));
+app.use(express.static(env.asset_path));
+app.use('/upload',express.static(__dirname+'/upload'));
+app.use(logger(env.morgan.mode,env.morgan.options));
+console.log('env mode',env.name);
 
 app.set('view engine','ejs');
 app.set('views','./views');
@@ -35,7 +52,7 @@ app.set('layout extractScripts',true);
 app.use(session({
     name:'codeial',
     // todo change the secret before deployment in production mode
-    secret:'blahsomething',
+    secret:env.session_cookie_key,
     saveUninitialized:false,
     resave:false,
     cookie:{
@@ -52,6 +69,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.setAuthenticateUser);
+app.use(flash());
+app.use(customMWare.setFlash);
 
 app.use('/',require('./routes'));
 
